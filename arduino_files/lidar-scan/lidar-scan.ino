@@ -32,10 +32,11 @@
 #include <tf/tf.h>
 #include <tf/transform_broadcaster.h>
 
-#define    LIDARLite_ADDRESS   0x62         
-#define    RegisterMeasure     0x00         
-#define    MeasureValue        0x04       
-#define    RegisterHighLowB    0x8f
+#define    LIDARLite_ADDRESS   0x62          // Default I2C Address of LIDAR-Lite.
+#define    RegisterMeasure     0x00          // Register to write to initiate ranging.
+#define    MeasureValue        0x04          // Value to initiate ranging.
+#define    RegisterHighLowB    0x8f          // Register to get both High and Low bytes in 1 call.
+
 #define    USB_USBCON
 
 float angle_min;
@@ -45,7 +46,7 @@ float time_increment;
 float Scan_time;
 float range_min;
 float range_max;
-float Ranges[30]; // max of 30 measurements
+float Ranges[30]; // max of 90 measurements
 float Intensities[30];
 
 int publisher_timer;
@@ -107,7 +108,7 @@ void setup(){
 
   s.write(0); // start the Servo at 0º position
 
-  Serial.begin(115200); // Initialize serial connection to display distance readings
+  Serial.begin(9600); // Initialize serial connection to display distance readings
 
   myLidarLite.begin(0, true); // Set configuration to default and I2C to 400 kHz
 
@@ -127,8 +128,8 @@ void setup(){
   Scan_time = 1.5; //time between scans [seconds]
   range_min = 0.001; //minimum range value [m]
   range_max = 40; //maximum range value [m]
-  laser_msg.ranges_length = 90;
-  laser_msg.intensities_length = 90;
+  laser_msg.ranges_length = 30;
+  laser_msg.intensities_length = 30;
 
 }
 
@@ -177,12 +178,12 @@ void loop(){
    laser_msg.ranges_length = point_reading;
    laser_msg.intensities_length = point_reading;
 
-   pub_range.publish(&laser_msg);
-
    time_Now  = millis();
    Scan_time = time_Now - time_Later;
    laser_msg.scan_time = Scan_time;
+   pub_range.publish(&laser_msg);
   
   nh.spinOnce();
   delay(10);
+
 }
