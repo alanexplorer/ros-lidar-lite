@@ -1,108 +1,87 @@
 #include "sync.h"
 
-Sync::Sync(){
+Sync::Sync(int stepsPerRevolution){
+
+    this->stepsPerRevolution = stepsPerRevolution;
+    this->motorStepCnt = 0;
+    this->lastMotorPos = -1;
+    this->secondsPerDegree = 0;
 
 }
 
 Sync::~Sync(){
 
-}
-
-void Sync::delta_angle(float angle_max, float angle_min, int n_steps){
-
-    float d;
-
-    d = (angle_max - angle_min)/(n_steps - 1);
-
-    set_delta(d);
+    this->stepsPerRevolution = 0;
+    this->motorStepCnt = 0;
+    this->lastMotorPos = 0;
+    this->secondsPerDegree = 0;
 
 }
 
-void Sync::servo_speed(float angle_max, float angle_min, float time){
+void Sync::calculate_speed(int p_position, int p_interval){
 
-    float t;
+  int degreesTraveled;
+  if ( p_position > get_lastMotorPos() ){
+      
+      degreesTraveled = p_position - get_lastMotorPos(); 
+  }
+  else{
+      
+      degreesTraveled = p_position - get_lastMotorPos() + 360;
+  }
 
-    t = (angle_max - angle_min)/time;
-
-    set_speed(t);
+  set_lastMotorPos(p_position);
+  float secsPerDeg = ( p_interval / 1000.0/*milliseconds*/ ) / degreesTraveled;
+  set_secondsPerDegree(( 0.9 * get_secondsPerDegree() ) + ( 0.1 * secsPerDeg ));
 }
 
-void Sync::min_time_pause(float delta, float speed){
+void Sync::position_motor(){
 
-    float s;
-
-    s = get_delta()/get_speed();
-
-    set_sleep(s);
-}
-
-float Sync::get_angle_min(){
-
-    return this->angle_min;
-}
-
-void Sync::set_angle_min(float angle){
-
-    this->angle_min = angle;
-}
-
-float Sync::get_angle_max(){
-
-    return this->angle_max;
-}
-
-void Sync::set_angle_max(float angle){
-
-    this->angle_max = angle;
-}
-
-int Sync::get_n_steps(){
+    float m = (360.0/stepsPerRevolution)*motorStepCnt;
     
-    return this->n_steps;
+    this->motorPos = m;
 }
 
-void Sync::set_n_steps(int n){
+//----------------------------------------getters and setters ---------------------------------
+
+float Sync::get_motorPos(){
     
-    this->n_steps = n;
+    return this->motorPos;
 }
 
-float Sync::get_time_min_max(){
+void Sync::set_motorPos(float p){
     
-    return this->time_min_max;
+    this->motorPos = p;
 }
 
-void Sync::set_time_min_max(float t){
-
-    this->time_min_max = t;
-
+long Sync::get_dT(){
+    
+    return this->dT;
 }
 
-float Sync::get_delta(){
-
-    return this->delta;
+void Sync::set_dT(long tNew, long tOld){
+    
+    long t;
+    t = tNew - tOld;
+    this->dT = t;
 }
 
-void Sync::set_delta(float d){
-
-    this->delta = d;
+float Sync::get_lastMotorPos(){
+    
+    return this->lastMotorPos;
 }
 
-float Sync::get_speed(){
+void Sync::set_lastMotorPos(float angle){
 
-    return this->speed;
+    this->lastMotorPos = angle;
 }
 
-void Sync::set_speed(float s){
-
-    this->speed = s;
+float Sync::get_secondsPerDegree(){
+    
+    return this->secondsPerDegree;
 }
 
-float Sync::get_sleep(){
+void Sync::set_secondsPerDegree(float tx){
 
-    return this->sleep;
-}
-
-void Sync::set_sleep(float s){
-
-    this->sleep = s;
+    this->secondsPerDegree = tx;
 }

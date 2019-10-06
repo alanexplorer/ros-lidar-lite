@@ -3,38 +3,33 @@
 
 class Sync
 {
-    float angle_min;       //- [deg]    Minimum angle of the servo
-    float angle_max;       //- [deg]    Maximum angle of the servo
-    int n_steps;           //- [ ]      number of measurements in the min-max range
-    float time_min_max;    //- [s]      time for the servo to move from min to max
-    float delta;
-    float speed;
-    float sleep;
+    int motorStepCnt;       
+    int stepsPerRevolution;       
+    int motorPos; // motor's position
+    int lastMotorPos;
+    float dT; // diference betwen times millis()
+    float secondsPerDegree;
+
 
     public:
-        Sync(); //start motor 0 degrees
+        Sync(int stepsPerRevolution); //start motor 0 degrees
         ~Sync();
 
         //getter and setter
-        float get_angle_min();
-        void set_angle_min(float angle);
-        float get_angle_max();
-        void set_angle_max(float angle);
-        int get_n_steps();
-        void set_n_steps(int n);
-        float get_time_min_max();
-        void set_time_min_max(float t);
-        float get_delta();
-        void set_delta(float d);
-        float get_speed();
-        void set_speed(float s);
-        float get_sleep();
-        void set_sleep(float s);
+        int get_motorPos();
+        void set_motorPos(int p);
+        long get_dT();
+        void set_dT(long tNew, long tOld);
+        int get_lastMotorPos();
+        void set_lastMotorPos(int a);
+        float get_secondsPerDegree();
+        void set_secondsPerDegree(float tx);
+
 
         //methods
-        void delta_angle(float angle_max, float angle_min, int n_steps); //Calculate the angle step
-        void servo_speed(float angle_max, float angle_min, float time);  //speed servo
-        void min_time_pause(float delta, float speed);
+    
+        void calculate_speed();  //speed servo
+        void position_motor(); //calc motor'position
 };
 
 #endif // SYNC_H
