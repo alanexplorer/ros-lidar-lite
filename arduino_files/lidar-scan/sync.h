@@ -30,6 +30,7 @@ class Sync
     
         void calculate_speed();  //speed servo
         void position_motor(); //calc motor'position
+        void stepAdd(); //add motor Step Cnt
 };
 
 #endif // SYNC_H

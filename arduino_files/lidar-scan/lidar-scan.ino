@@ -18,14 +18,21 @@
 #include <Wire.h>
 #include <LIDARLite.h>
 #include "sync.h"
+#include <Servo.h>
+#include "TimerOne.h"
+
 
 LIDARLite myLidarLite;
 
 Sync sync(30); //steps Per Revolution
 
+//clock_t startTime;
 int reading = 0;
 long tNew, tOld;  // time in milliseconds()
 
+Servo s;
+int pos; 
+const int pinoServo = 6;
 void setup()
 {
   Serial.begin(115200); // Initialize serial connection to display distance readings
@@ -35,6 +42,11 @@ void setup()
   myLidarLite.configure(0); // Change this number to try out alternate configurations
 
   tOld = 0.0;
+
+  s.attach(pinoServo);
+
+  s.write(0);
+
 }
 
 void loop()
@@ -46,15 +58,18 @@ void loop()
   sync.position_motor();
   sync.calculate_speed();
 
-  Serial.print( get_motorPos() ); // index for ranges[]
+  Serial.print( sync.get_motorPos() ); // index for ranges[]
   Serial.print(",");
   Serial.print(reading); //value for ranges[]
   Serial.print(",");
-  Serial.print(get_secondsPerDegree(),3); //value time_increment 
+  Serial.print(sync.get_secondsPerDegree(),3); //value time_increment 
   Serial.print(",");
-  Serial.print(get_dT());
+  Serial.print(sync.get_dT());
   Serial.println();
 
   tOld = tNew;
+
+  delay(500);
+  sync.stepAdd();
 
 }
