@@ -24,15 +24,18 @@
 
 LIDARLite myLidarLite;
 
-Sync sync(30); //steps Per Revolution
+const int steps = 400; // Makes 400 pulses/0.9 angle per step, for making one full cycle rotation
+
+Sync sync(steps); //steps Per Revolution
 
 //clock_t startTime;
 int reading = 0;
 long tNew, tOld;  // time in milliseconds()
 
-Servo s;
-int pos; 
-const int pinoServo = 6;
+// defines pins numbers
+const int stepPin = 3; 
+const int dirPin = 4;
+
 void setup()
 {
   Serial.begin(115200); // Initialize serial connection to display distance readings
@@ -43,33 +46,32 @@ void setup()
 
   tOld = 0.0;
 
-  s.attach(pinoServo);
-
-  s.write(0);
+  // Sets the two pins as Outputs
+  pinMode(stepPin,OUTPUT); 
+  pinMode(dirPin,OUTPUT);
 
 }
 
 void loop()
 {
-  reading = myLidarLite.distance();
-  tNew = millis(); //return time in milliseconds since arduino was started
+  digitalWrite(dirPin,HIGH); // Enables the motor to move in a particular direction
+  
+  for(int i = 0; i < steps; i++) {
 
-  sync.set_dT(tNew, tOld);
-  sync.position_motor();
-  sync.calculate_speed();
+    reading = myLidarLite.distance(); //read distance on laser
+    sync.set_motorPos(i) // update motor'position
+    sync.calculate_speed();
 
+    digitalWrite(stepPin,HIGH); 
+    delayMicroseconds(500); 
+    digitalWrite(stepPin,LOW); 
+    delayMicroseconds(500);
+
+  }
+  
   Serial.print( sync.get_motorPos() ); // index for ranges[]
   Serial.print(",");
-  Serial.print(reading); //value for ranges[]
-  Serial.print(",");
-  Serial.print(sync.get_secondsPerDegree(),3); //value time_increment 
-  Serial.print(",");
-  Serial.print(sync.get_dT());
+  Serial.print(reading); //value for ranges[] 
   Serial.println();
-
-  tOld = tNew;
-
-  delay(500);
-  sync.stepAdd();
 
 }
