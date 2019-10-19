@@ -18,13 +18,13 @@
 #include <Wire.h>
 #include <LIDARLite.h>
 #include "sync.h"
-#include <Servo.h>
+#include <AccelStepper.h>
 #include "TimerOne.h"
 
 
 LIDARLite myLidarLite;
 
-const int steps = 400; // Makes 400 pulses/0.9 angle per step, for making one full cycle rotation
+const int steps = 200; // Makes 400 pulses/0.9 angle per step, for making one full cycle rotation
 
 Sync sync(steps); //steps Per Revolution
 
@@ -32,9 +32,8 @@ Sync sync(steps); //steps Per Revolution
 int reading = 0;
 long tNew, tOld;  // time in milliseconds()
 
-// defines pins numbers
-const int stepPin = 3; 
-const int dirPin = 4;
+
+AccelStepper stepper(2, 2,3);
 
 void setup()
 {
@@ -46,32 +45,27 @@ void setup()
 
   tOld = 0.0;
 
-  // Sets the two pins as Outputs
-  pinMode(stepPin,OUTPUT); 
-  pinMode(dirPin,OUTPUT);
+  stepper.setMaxSpeed(2000);
+  stepper.setSpeed(500);  
 
 }
 
 void loop()
 {
-  digitalWrite(dirPin,HIGH); // Enables the motor to move in a particular direction
   
   for(int i = 0; i < steps; i++) {
 
     reading = myLidarLite.distance(); //read distance on laser
-    sync.set_motorPos(i) // update motor'position
-    sync.calculate_speed();
+    sync.set_motorPos(i); // update motor'position
 
-    digitalWrite(stepPin,HIGH); 
-    delayMicroseconds(500); 
-    digitalWrite(stepPin,LOW); 
-    delayMicroseconds(500);
+    stepper.runSpeed();
+
+    Serial.print( sync.get_motorPos() ); // index for ranges[]
+    Serial.print(",");
+    Serial.print(reading); //value for ranges[] 
+    Serial.println();
 
   }
   
-  Serial.print( sync.get_motorPos() ); // index for ranges[]
-  Serial.print(",");
-  Serial.print(reading); //value for ranges[] 
-  Serial.println();
 
 }

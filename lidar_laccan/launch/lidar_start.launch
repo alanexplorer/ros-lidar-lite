@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <launch>
 
-   <node pkg="lidar_lacan" name="talker" type="talker.py" output="screen">
+   <node pkg="lidar_laccan" name="talker" type="talker.py" output="screen">
       <param name="laser_frame" value="scanner" />
       <param name="scan_topic" value="scan" />
       <param name="device" value="/dev/ttyACM0" />

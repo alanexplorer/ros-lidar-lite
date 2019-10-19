@@ -5,6 +5,7 @@ Sync::Sync(int stepsPerRevolution){
     this->stepsPerRevolution = stepsPerRevolution;
     this->motorStepCnt = 0;
     this->lastMotorPos = -1;
+    this->motorPos = 0;
 }
 
 Sync::~Sync(){

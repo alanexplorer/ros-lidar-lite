@@ -5,8 +5,8 @@ class Sync
 {
     int motorStepCnt;       
     int stepsPerRevolution;       
-    int motorPos; // motor's position
-    int lastMotorPos;
+    float motorPos; // motor's position
+    float lastMotorPos;
 
 
     public:
@@ -14,10 +14,10 @@ class Sync
         ~Sync();
 
         //getter and setter
-        int get_motorPos();
-        void set_motorPos(int p);
-        int get_lastMotorPos();
-        void set_lastMotorPos(int a);
+        float get_motorPos();
+        void set_motorPos(float p);
+        float get_lastMotorPos();
+        void set_lastMotorPos(float a);
 
         //methods
 
