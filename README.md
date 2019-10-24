@@ -27,4 +27,4 @@ $ rosrun rosserial_python serial_node.py /dev/ttyACM0
 
 https://github.com/garmin/LIDARLite_Arduino_Library
 
-
+https://www.embarcados.com.br/python-e-arduino-comunicacao-serial/

@@ -24,7 +24,7 @@
 
 LIDARLite myLidarLite;
 
-const int steps = 200; // Makes 400 pulses/0.9 angle per step, for making one full cycle rotation
+const int steps = 200; // Makes 200 pulses/1.8 angle per step, for making one full cycle rotation
 
 Sync sync(steps); //steps Per Revolution
 
@@ -55,6 +55,8 @@ void loop()
   
   for(int i = 0; i < steps; i++) {
 
+    /*
+
     reading = myLidarLite.distance(); //read distance on laser
     sync.set_motorPos(i); // update motor'position
 
@@ -65,7 +67,11 @@ void loop()
     Serial.print(reading); //value for ranges[] 
     Serial.println();
 
-  }
-  
+    */
+    Serial.print(sync.fakeMotor(i));
+    Serial.print(',');
+    Serial.print(sync.fakeLaser());
+    Serial.println();
 
+  }
 }

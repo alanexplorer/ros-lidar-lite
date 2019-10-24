@@ -6,6 +6,8 @@ Sync::Sync(int stepsPerRevolution){
     this->motorStepCnt = 0;
     this->lastMotorPos = -1;
     this->motorPos = 0;
+
+    this->anglePerStep = 360.0/stepsPerRevolution;
 }
 
 Sync::~Sync(){
@@ -36,4 +38,18 @@ float Sync::get_lastMotorPos(){
 void Sync::set_lastMotorPos(float angle){
 
     this->lastMotorPos = angle;
+}
+
+
+float Sync::fakeLaser() {
+  
+  float random = ((float) rand()) / (float) RAND_MAX;
+  float r = random * 50;
+  return r;
+}
+
+float Sync::fakeMotor(int pos) {
+  
+  float r = this->anglePerStep * pos;
+  return r;
 }
