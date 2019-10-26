@@ -61,11 +61,13 @@ void loop()
 
     stepper.runSpeed();
 
-    Serial.print( sync.get_laserAngle() ); // index for ranges[]
+    Serial.print( i ); // Print data index first
     Serial.print(",");
-    Serial.print(reading); //value for ranges[] 
+    Serial.print( sync.get_laserAngle() * 3.1415 / 180.0 ); // Laser angle in radians
+    Serial.print(",");
+    Serial.print(reading); //value for ranges[] a
     Serial.println();
-    delay(100);
+    delay(10);
 
 //    Serial.print(sync.fakeLaserAngle(i));
 //    Serial.print(',');

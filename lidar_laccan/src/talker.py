@@ -5,12 +5,14 @@ from sensor_msgs.msg import LaserScan
 import std_msgs.msg
 import math
 import numpy as np
+import tf
 
 rospy.init_node('laser_scan')
 
 pub = rospy.Publisher('scan', LaserScan, queue_size = 50)
+br = tf.TransformBroadcaster()
 
-num_readings = 200
+num_readings = 600
 laser_frequency = 4
 
 scan = LaserScan()
@@ -31,6 +33,13 @@ def is_float(value):
     except:
         return False
 
+def is_int(value):
+    try:
+        int(value)
+        return True
+    except:
+        return False
+
 try:
     ser = serial.Serial('/dev/ttyACM0', 115200, timeout=0.050)
 
@@ -43,23 +52,39 @@ if ser.isOpen():
 else:
     rospy.loginfo("Error Serial Port")
 
-rate = rospy.Rate(10)
+rate = rospy.Rate(100)
 
 lostData = 0 #count Decode Error
      
 while not rospy.is_shutdown():
     scan.header.stamp = rospy.Time.now()
+    # Frame from laser base
+    br.sendTransform(
+        (0.5, 0, 0), # 30 cm offset in height 
+        tf.transformations.quaternion_from_euler(0, 0, 0),
+        rospy.Time.now(),
+        "laser_base",
+        "world"
+    )
     try:
         if (ser.inWaiting()): #if serial available
             data = ser.readline().decode().rstrip() # remove newline and carriage return characters
             data = data.split(',')
-            if len(data) == 2:
-                if is_float(data[0]) and is_float(data[1]):
-                    pos_motor = float(data[0])
-                    index = pos_motor/1.8
-                    scan.ranges[int(index)] = float(data[1])
-                    scan.intensities[int(index)] = float(data[1])
-                
+            if len(data) == 3:  # Of form [data_index, laser_angle, laser_reading]
+                if is_int(data[0]) and is_float(data[1]) and is_float(data[2] ):
+                    data_index = int(data[0])
+                    laser_angle = float(data[1])
+                    laser_distance = float(data[2])
+                    # Frame from laser tip
+                    br.sendTransform(
+                        (0, 0, 0.5), # 50 cm offset in height 
+                        tf.transformations.quaternion_from_euler(0, 0, laser_angle),
+                        rospy.Time.now(),
+                        "laser_tip",
+                        "laser_base"
+                    )
+                    scan.ranges[data_index] = laser_distance
+                    scan.intensities[data_index] = 1
         else:
             lostData=+1
     except UnicodeDecodeError:# catch error and ignore it
