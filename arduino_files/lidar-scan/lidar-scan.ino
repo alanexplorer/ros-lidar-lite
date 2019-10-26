@@ -56,24 +56,22 @@ void loop()
   
   for(int i = 0; i < outputSteps; i++) {
 
-    /*
-
     reading = myLidarLite.distance(); //read distance on laser
     sync.set_motorPos(i); // update motor'position
 
     stepper.runSpeed();
 
-    Serial.print( sync.get_motorPos() ); // index for ranges[]
+    Serial.print( sync.get_laserAngle() ); // index for ranges[]
     Serial.print(",");
     Serial.print(reading); //value for ranges[] 
     Serial.println();
-
-    */
-    Serial.print(sync.fakeLaserAngle(i));
-    Serial.print(',');
-    Serial.print(sync.fakeLaser());
-    Serial.println();
     delay(100);
+
+//    Serial.print(sync.fakeLaserAngle(i));
+//    Serial.print(',');
+//    Serial.print(sync.fakeLaser());
+//    Serial.println();
+//    delay(100);
 
   }
 }

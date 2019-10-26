@@ -9,7 +9,7 @@ class Sync
     int stepsPerRevolution;
     int outputStepsPerRevolution; // steps on inputGear for a complete cycle in outputGear
     float motorPos; // motor's position
-    float lastMotorPos;
+    float laserAngle; // outputGear angle
     float anglePerStep;
     float gearRatio;    
     
@@ -22,10 +22,8 @@ class Sync
         int get_outputStepsPerRevolution();
         float get_motorPos();
         void set_motorPos(float p);
-        float get_lastMotorPos();
-        void set_lastMotorPos(float a);
-        float get_laserPos();
-        void set_laserPos(float p);
+        float get_laserAngle();
+        void set_laserAngle(float s); // receives step position s from inputGear
         
         //methods
         float fakeLaser();

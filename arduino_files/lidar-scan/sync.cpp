@@ -4,7 +4,6 @@ Sync::Sync(int stepsPerRevolution, int inputGearTeeth, int outputGearTeeth){
 
     this->stepsPerRevolution = stepsPerRevolution;
     this->motorStepCnt = 0;
-    this->lastMotorPos = -1;
     this->motorPos = 0;
 
     this->anglePerStep = 360.0/stepsPerRevolution;
@@ -17,10 +16,17 @@ Sync::~Sync(){
     this->stepsPerRevolution = 0;
     this->outputStepsPerRevolution = 0;
     this->motorStepCnt = 0;
-    this->lastMotorPos = 0;
 }
 
 //----------------------------------------getters and setters ---------------------------------
+
+float Sync::get_laserAngle() {
+  return this->anglePerStep * this->motorPos * this->gearRatio;
+}
+
+void Sync::set_laserAngle(float s) {
+  this->laserAngle = this->anglePerStep * s * this->gearRatio;
+}
 
 float Sync::get_motorPos(){
     
@@ -30,16 +36,7 @@ float Sync::get_motorPos(){
 void Sync::set_motorPos(float p){
     
     this->motorPos = p;
-}
-
-float Sync::get_lastMotorPos(){
-    
-    return this->lastMotorPos;
-}
-
-void Sync::set_lastMotorPos(float angle){
-
-    this->lastMotorPos = angle;
+    this->set_laserAngle( p );
 }
 
 int Sync::get_outputStepsPerRevolution(){
