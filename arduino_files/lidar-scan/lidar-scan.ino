@@ -65,7 +65,7 @@ void loop()
     Serial.print(",");
     Serial.print( sync.get_laserAngle() * 3.1415 / 180.0 ); // Laser angle in radians
     Serial.print(",");
-    Serial.print(reading); //value for ranges[] a
+    Serial.print( (float) reading / 100.0); //value for ranges[] in meters
     Serial.println();
     delay(10);
 
