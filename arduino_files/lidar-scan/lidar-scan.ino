@@ -25,8 +25,9 @@
 LIDARLite myLidarLite;
 
 const int steps = 200; // Makes 200 pulses/1.8 angle per step, for making one full cycle rotation
+Sync sync(steps, 40, 60); // Steps Per Revolution, number of teeth in inputGear, number of teeth in outputGear
+const int outputSteps = sync.get_outputStepsPerRevolution(); // steps on inputGear for a complete cycle in outputGear
 
-Sync sync(steps); //steps Per Revolution
 
 //clock_t startTime;
 int reading = 0;
@@ -53,7 +54,7 @@ void setup()
 void loop()
 {
   
-  for(int i = 0; i < steps; i++) {
+  for(int i = 0; i < outputSteps; i++) {
 
     /*
 
@@ -68,10 +69,11 @@ void loop()
     Serial.println();
 
     */
-    Serial.print(sync.fakeMotor(i));
+    Serial.print(sync.fakeLaserAngle(i));
     Serial.print(',');
     Serial.print(sync.fakeLaser());
     Serial.println();
+    delay(100);
 
   }
 }
