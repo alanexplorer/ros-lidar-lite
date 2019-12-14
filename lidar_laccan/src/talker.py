@@ -22,7 +22,7 @@ scan.angle_increment = math.pi*2.0 / num_readings
 """
 TODO: Investigate why time_increment breaks the laser when defined. 
 """
-#scan.time_increment = 1.0 #(1.0/laser_frequency)/(num_readings) 
+# scan.time_increment = 0.000004 
 scan.range_min = 0.0
 scan.range_max = 50.0
 scan.ranges = np.zeros(num_readings, dtype = float)
@@ -72,6 +72,7 @@ while not rospy.is_shutdown():
         if (ser.inWaiting()): #if serial available
             data = ser.readline().decode().rstrip() # remove newline and carriage return characters
             data = data.split(',')
+            print(data) 
             if len(data) == 3:  # Of form [data_index, laser_angle, laser_reading]
                 if is_int(data[0]) and is_float(data[1]) and is_float(data[2] ):
                     # Define Scan header
