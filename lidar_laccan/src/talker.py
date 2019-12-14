@@ -12,8 +12,8 @@ rospy.init_node('laser_scan')
 pub = rospy.Publisher('scan', LaserScan, queue_size = 50)
 br = tf.TransformBroadcaster()
 
-num_readings = 300
-laser_frequency = 4
+num_readings = 200
+laser_frequency = 250
 
 scan = LaserScan()
 scan.angle_min = 0
@@ -43,7 +43,7 @@ def is_int(value):
         return False
 
 try:
-    ser = serial.Serial('/dev/ttyACM0', 115200, timeout=0.050)
+    ser = serial.Serial('/dev/ttyACM0', 9600, timeout=0.050)
 
 except(rospy.ServiceException, rospy.ROSException), e:
     ser.close()
@@ -93,11 +93,11 @@ while not rospy.is_shutdown():
                         "laser_base"
                     )
                     # Clean previous values
-                    scan.ranges = np.zeros(num_readings, dtype = float)
-                    scan.intensities = np.zeros(num_readings, dtype = float)
+                    # scan.ranges = np.zeros(num_readings, dtype = float)
+                    # scan.intensities = np.zeros(num_readings, dtype = float)
                     # Add new values
                     scan.ranges[data_index] = laser_distance
-                    scan.intensities[data_index] = 1.0
+                    scan.intensities[data_index] = laser_distance
                     # Only publish if received
                     pub.publish(scan)
         else:
