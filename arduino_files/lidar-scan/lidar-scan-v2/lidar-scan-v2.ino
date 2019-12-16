@@ -47,14 +47,16 @@
         for (int i = 0; i < 200; i++) {
           reading = (float) (myLidarLite.distance() / 100.0); //read distance on laser
           angle = i * 1.8 * M_PI / 180.0;
+          Serial.print(i);
+          Serial.print(",");
           Serial.print(angle);
           Serial.print(",");
           Serial.println(reading); //value for ranges[] in meters
           // These four lines result in 1 step:
           digitalWrite(stepPin, HIGH);
-          delayMicroseconds(2000);
+          delayMicroseconds(500);
           digitalWrite(stepPin, LOW);
-          delayMicroseconds(2000);
+          delayMicroseconds(500);
         }
        
       }
